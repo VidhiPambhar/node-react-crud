@@ -9,25 +9,25 @@ const initialState = {
   email: "",
   cno: "",
 };
-const addContact = async (data) => {
-  const res = await axios.post("http://localhost:5001/user", data);
-  if (res.status === 200) {
-    toast.success(res.data);
-    // console.log(res.data);
-  }
-};
 const AddEdit = () => {
   const navigate = useNavigate();
   const [state, setState] = useState(initialState);
   const { name, email, cno } = initialState;
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    if (!name || !email || !cno) {
-      toast.error("Please fill correct details");
-    } else {
+  const handleSubmit = (e) => {
+    e.preventDefault();    
+    // if (!name || !email || !cno) {
+    //   toast.error("Please fill correct details");
+    // } else {
       addContact(state);
       navigate("/");
+    // }
+  };
+  const addContact = async (data) => {
+    const res = await axios.post("http://localhost:5001/user", data);
+    if (res.status === 200) {
+      toast.success(res.data);
+      // console.log(res.data);
     }
   };
   const handleInputChange = (e) => {
@@ -69,7 +69,7 @@ const AddEdit = () => {
           </h1>
           <Form.Control
             type="text"
-            value={name}
+            value={state.name}
             onChange={handleInputChange}
             name="name"
             placeholder="Enter Name"
@@ -82,7 +82,7 @@ const AddEdit = () => {
         >
           <Form.Control
             type="text"
-            value={email}
+            value={state.email}
             onChange={handleInputChange}
             name="email"
             placeholder=" Email"
@@ -95,7 +95,7 @@ const AddEdit = () => {
           >
           <Form.Control
             type="text"
-            value={cno}
+            value={state.cno}
             onChange={handleInputChange}
             name="cno"
             placeholder="Enter contact"
@@ -105,7 +105,6 @@ const AddEdit = () => {
 
         <Button
           variant="dark"
-          // onClick={getData}
           size="lg"
           type="submit"
           style={{ marginLeft: "30%", marginBottom: "2rem", width: "30%" }}
@@ -115,31 +114,7 @@ const AddEdit = () => {
       </Form>
     </div>
 
-    // <div style={{ marginTop: "100px" }}>
-    //   <form onSubmit={handleSubmit}>
-    //   <input
-    //     type="name"
-    //     placeholder="Enter ur name"
-    //     value={name}
-    //     onChange={handleInputChange}
-    //   />
-    //    <input
-    //     type="email"
-    //     placeholder="Enter ur email"
-    //     value={email}
-    //     onChange={handleInputChange}
-    //   />
-    //    <input
-    //     type="number"
-    //     placeholder="Enter ur contact"
-    //     value={contact}
-    //     onChange={handleInputChange}
-    //   />
-
-    //  <button >Add</button>
-    // </form>
-
-    // </div>
+   
   );
 };
 
