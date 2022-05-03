@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { toast } from "react-toastify";
 function Home() {
   const [data, setData] = useState();
 
@@ -14,7 +15,16 @@ function Home() {
       setData(res.data);
     }
   };
-  console.log("data:", data);
+
+  const deleteUser = async (id) => {
+    window.confirm("Are youy sure that you wanted to delete?");
+    const res = await axios.delete(`http://localhost:5001/user/${id}`);
+    if (res.status === 200) {
+      toast.success(res.data);
+      getUsers();
+    }
+  };
+  // console.log("data:", data);
   return (
     <>
       <Table striped bordered hover style={{ marginTop: "3rem" }}>
@@ -42,15 +52,19 @@ function Home() {
                         Edit
                       </Button>
                     </Link>
-                    <Link  to={`/view/${item.id}`}>
+                    <Link to={`/view/${item.id}`}>
                       <Button style={{ margin: "2px" }} variant="primary">
                         View
                       </Button>
                     </Link>
-              
-                      <Button style={{ margin: "2px" }} variant="primary">
-                        Delete
-                      </Button>
+
+                    <Button
+                      style={{ margin: "2px" }}
+                      variant="primary"
+                      onClick={() => deleteUser(item.id)}
+                    >
+                      Delete
+                    </Button>
                   </td>
                 </tr>
               );

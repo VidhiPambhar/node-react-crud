@@ -1,7 +1,8 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useNavigate } from "react-router";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./AddEdit.css";
 const initialState = {
@@ -13,23 +14,51 @@ const AddEdit = () => {
   const navigate = useNavigate();
   const [state, setState] = useState(initialState);
   const { name, email, cno } = initialState;
+  const { id } = useParams();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();    
-    // if (!name || !email || !cno) {
-    //   toast.error("Please fill correct details");
-    // } else {
-      addContact(state);
-      navigate("/");
-    // }
+  useEffect(() => {
+    if (id) {
+      getSingleUser(id);
+    }
+  }, [id]);
+
+  const getSingleUser = async (id) => {
+    const res = await axios.get(`http://localhost:5001/user/${id}`);
+    if (res.status === 200) {
+      setState({ ...res.data[0]});
+    }
+    console.log("singleUser data",res.data);
   };
-  const addContact = async (data) => {
+  
+  const addUser = async (data) => {
     const res = await axios.post("http://localhost:5001/user", data);
+    if (res.status === 200) {
+      toast.success(res.data);
+    }
+  };
+
+  const updateUser = async (data, id) => {
+    const res = await axios.put(`http://localhost:5001/user/${id}`, data);
     if (res.status === 200) {
       toast.success(res.data);
       // console.log(res.data);
     }
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // if (!name || !email ) {
+    //   toast.error("Please fill correct details");
+    // } else {
+    if (!id) {
+      addUser(state);
+    } else {
+      updateUser(state, id);
+    }
+    navigate("/");
+    // }
+    console.log("updated user",state);
+  };
+  
   const handleInputChange = (e) => {
     let { name, value } = e.target;
     setState({ ...state, [name]: value });
@@ -87,12 +116,12 @@ const AddEdit = () => {
             name="email"
             placeholder=" Email"
           />
-          </Form.Group>
-          <Form.Group
-            className="mb-3"
-            controlId="formBasicPassword"
-            style={{ width: "50%", marginLeft: "20%" }}
-          >
+        </Form.Group>
+        <Form.Group
+          className="mb-3"
+          controlId="formBasicPassword"
+          style={{ width: "50%", marginLeft: "20%" }}
+        >
           <Form.Control
             type="text"
             value={state.cno}
@@ -102,19 +131,30 @@ const AddEdit = () => {
           />
         </Form.Group>
         <br />
-
-        <Button
+        <input
+          type="submit"
+          value={id ? "Update" : "Add"}
+          style={{
+            backgroundColor: "#917c46 ",
+            borderStyle: "none",
+            fontSize: "20px",
+            borderRadius: "2px",
+            marginLeft: "30%",
+            marginBottom: "2rem",
+            width: "30%",
+          }}
+        />
+        {/* <Button
           variant="dark"
           size="lg"
+          // value={id ? "Update" : "Add"}
           type="submit"
           style={{ marginLeft: "30%", marginBottom: "2rem", width: "30%" }}
         >
           Add
-        </Button>
+        </Button> */}
       </Form>
     </div>
-
-   
   );
 };
 

@@ -1,8 +1,58 @@
-import React from 'react'
+import axios from 'axios';
+import React ,{useState,useEffect} from 'react'
+import { Button, Card } from 'react-bootstrap';
+import { useParams , Link} from 'react-router-dom';
 
 function View() {
+  const [user,setUser]= useState(null)
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      getSingleUser(id);
+    }
+  }, [id]);
+
+  const getSingleUser = async (id) => {
+    const res = await axios.get(`http://localhost:5001/user/${id}`);
+    if (res.status === 200) {
+      setUser({ ...res.data[0]});
+    }
+    console.log("singleUser data",res.data);
+  };
+  
   return (
-    <div>View</div>
+  <div >
+  <Card style={{ width: '18rem' , marginLeft:"40%",marginTop:"4rem"}}>
+  
+  <Card.Body>
+    <h3 style={{color:"#917c46"}}>User details</h3>
+    {/* <Card.Title>ID:</Card.Title>
+
+    <Card.Text>
+      {id}
+    </Card.Text> */}
+    <Card.Title>Name:</Card.Title>
+
+<Card.Text>
+  {user && user.name}
+</Card.Text>
+<Card.Title>Email:</Card.Title>
+
+<Card.Text>
+  {user &&user.email}
+</Card.Text>
+<Card.Title>Contact no:</Card.Title>
+
+<Card.Text>
+  {user &&user.cno}
+</Card.Text>
+    <Link to="/">
+    <Button variant="primary">Go Back</Button>
+    </Link>
+  </Card.Body>
+</Card>
+  </div>
   )
 }
 
